@@ -34,7 +34,14 @@ async function start(): Promise<void> {
       NODE_ENV: env.NODE_ENV,
       PORT: env.PORT,
       databaseConfigured: Boolean(env.MONGODB_URI),
+      authConfigured: Boolean(env.JWT_SECRET),
     });
+
+    // Validate JWT_SECRET in production
+    if (isProduction() && !env.JWT_SECRET) {
+      logger.error('Production startup aborted: JWT_SECRET is required but not configured.');
+      process.exit(1);
+    }
 
     // 2. Connect to database (if configured)
     if (!isTest()) {

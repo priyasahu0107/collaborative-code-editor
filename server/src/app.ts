@@ -10,19 +10,22 @@
  * 2. CORS
  * 3. Request logging (safe — no sensitive data)
  * 4. Body parsing
- * 5. Routes
- * 6. 404 handler
- * 7. Error handler
+ * 5. Cookie parsing
+ * 6. Routes
+ * 7. 404 handler
+ * 8. Error handler
  */
 
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import { getCorsOptions } from './config/cors.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFoundHandler } from './middleware/notFound.js';
 import healthRoutes from './routes/health.routes.js';
+import authRoutes from './modules/auth/auth.routes.js';
 import logger from './utils/logger.js';
 
 const app = express();
@@ -57,17 +60,21 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
+// ─── Cookie Parsing ──────────────────────────────────────────────────────────
+app.use(cookieParser());
+
 // ─── API Routes ──────────────────────────────────────────────────────────────
 // Versioned API prefix
 app.use('/api/v1/health', healthRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 // API root info
 app.get('/api/v1', (_req, res) => {
   res.json({
     success: true,
     message: 'Collaborative Code Editor API',
-    data: {
-      version: '0.2.0',
+     {
+      version: '0.3.0',
       documentation: '/api/v1/health',
     },
   });

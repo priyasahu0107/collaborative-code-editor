@@ -50,12 +50,18 @@ cp server/.env.example server/.env
 | `NODE_ENV` | Environment mode (`development`, `production`, `test`) | No | `development` |
 | `CLIENT_URL` | Allowed frontend origin(s) for CORS | No | `http://localhost:5173` |
 | `MONGODB_URI` | MongoDB Atlas connection string | Production only | — |
-| `JWT_SECRET` | JWT signing secret | Production (future) | — |
+| `JWT_SECRET` | JWT signing secret (min 32 chars) | Production | — |
+| `JWT_ISSUER` | JWT issuer (optional) | No | — |
+| `JWT_AUDIENCE` | JWT audience (optional) | No | — |
+| `JWT_EXPIRES_IN` | JWT expiration time | No | `15m` |
+| `COOKIE_NAME` | Authentication cookie name | No | `auth_token` |
+| `COOKIE_SAME_SITE` | Cookie SameSite attribute | No | `lax` |
 | `EXECUTION_SERVICE_URL` | Execution service URL | Future | — |
 
 **Notes:**
 - `MONGODB_URI` is optional in development. The server starts in "database-disabled" mode if not set.
 - `MONGODB_URI` is **required** in production. The server will fail to start without it.
+- `JWT_SECRET` is **required** in production. Generate with: `openssl rand -base64 48`
 - Multiple CORS origins can be comma-separated: `http://localhost:5173,https://myapp.com`
 - Never commit real credentials. Only use `.env.example` as a template.
 

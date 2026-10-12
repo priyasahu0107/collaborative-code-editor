@@ -3,8 +3,7 @@
  *
  * Uses Zod to validate all environment variables at startup.
  * - In development: MongoDB URI is optional (server can start without DB).
- * - In production: MongoDB URI is required.
- * - JWT_SECRET is optional (authentication not yet implemented).
+ * - In production: MongoDB URI and JWT_SECRET are required.
  * - EXECUTION_SERVICE_URL is optional (execution service not yet used).
  * - Never exposes credentials in logs or errors.
  */
@@ -32,10 +31,24 @@ const preprocessSchema = z.object({
       { message: 'MONGODB_URI must be a valid MongoDB connection string' },
     ).optional(),
   ),
+  // Authentication configuration
   JWT_SECRET: z.preprocess(
+    (val) => (val === '' || val === undefined ? undefined : val),
+    z.string().min(32, 'JWT_SECRET must be at least 32 characters').optional(),
+  ),
+  JWT_ISSUER: z.preprocess(
     (val) => (val === '' || val === undefined ? undefined : val),
     z.string().optional(),
   ),
+  JWT_AUDIENCE: z.preprocess(
+    (val) => (val === '' || val === undefined ? undefined : val),
+    z.string().optional(),
+  ),
+  JWT_EXPIRES_IN: z.string().default('15m'),
+  // Cookie configuration
+  COOKIE_NAME: z.string().default('auth_token'),
+  COOKIE_SAME_SITE: z.enum(['strict', 'lax', 'none']).default('lax'),
+  // Execution service (optional)
   EXECUTION_SERVICE_URL: z.preprocess(
     (val) => (val === '' || val === undefined ? undefined : val),
     z.string().url().optional(),
@@ -97,6 +110,14 @@ export function getEnv(): EnvConfig {
 export function isDatabaseConfigured(): boolean {
   const env = getEnv();
   return Boolean(env.MONGODB_URI);
+}
+
+/**
+ * Check if JWT authentication is configured.
+ */
+export function isAuthConfigured(): boolean {
+  const env = getEnv();
+  return Boolean(env.JWT_SECRET);
 }
 
 /**

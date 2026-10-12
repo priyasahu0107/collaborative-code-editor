@@ -95,8 +95,8 @@ See [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) for detailed structure.
 
 - ✅ **Step 1**: Foundation setup (monorepo, configs, docs)
 - ✅ **Step 2**: Backend foundation (Express, env validation, MongoDB, health checks)
-- 🔲 **Step 3**: Authentication & user management (next)
-- 🔲 **Step 4**: Project management
+- ✅ **Step 3**: Authentication & user management (JWT, bcrypt, HTTP-only cookies)
+- 🔲 **Step 4**: Project management (next)
 - 🔲 **Step 5**: Real-time collaboration
 
 ## Documentation

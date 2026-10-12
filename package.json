@@ -1,0 +1,49 @@
+{
+  "name": "collaborative-code-editor",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server",
+    "execution-service"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=client",
+    "dev:client": "npm run dev --workspace=client",
+    "dev:server": "npm run dev --workspace=server",
+    "dev:execution": "npm run dev --workspace=execution-service",
+    "build": "npm run build --workspace=client",
+    "build:client": "npm run build --workspace=client",
+    "build:server": "npm run build --workspace=server",
+    "build:execution": "npm run build --workspace=execution-service",
+    "build:all": "npm run build:client && npm run build:server && npm run build:execution",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "typecheck:client": "npm run typecheck --workspace=client",
+    "typecheck:server": "npm run typecheck --workspace=server",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:client": "npm run lint --workspace=client",
+    "lint:server": "npm run lint --workspace=server",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md}\"",
+    "test": "npm run test --workspaces --if-present",
+    "test:client": "npm run test --workspace=client",
+    "test:server": "npm run test --workspace=server",
+    "clean": "rm -rf node_modules client/node_modules server/node_modules execution-service/node_modules client/dist server/dist"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/supertest": "^7.2.1",
+    "axios": "^1.20.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "express-rate-limit": "^8.7.1",
+    "jsonwebtoken": "^9.0.3",
+    "supertest": "^7.3.1",
+    "vitest": "^5.0.4"
+  }
+}

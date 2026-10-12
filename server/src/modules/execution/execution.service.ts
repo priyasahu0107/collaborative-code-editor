@@ -16,6 +16,8 @@ interface ExecutionServiceResponse {
   message?: string;
 }
 
+export type ExecutionServiceHealth = 'healthy' | 'disabled' | 'unhealthy';
+
 /**
  * Execute code via the execution service
  */
@@ -69,6 +71,9 @@ export async function executeCode(
       }
 
       if (axiosError.response?.data?.error) {
+        if (axiosError.response.data.error === 'EXECUTION_DISABLED') {
+          throw new Error(EXECUTION_ERRORS.EXECUTION_DISABLED);
+        }
         throw new Error(axiosError.response.data.error);
       }
     }
@@ -114,11 +119,11 @@ export async function getSupportedLanguages(): Promise<Array<{ id: string; name:
 /**
  * Check execution service health
  */
-export async function checkExecutionServiceHealth(): Promise<boolean> {
+export async function checkExecutionServiceHealth(): Promise<ExecutionServiceHealth> {
   const env = getEnv();
   
   if (!env.EXECUTION_SERVICE_URL) {
-    return false;
+    return 'unhealthy';
   }
 
   try {
@@ -129,8 +134,12 @@ export async function checkExecutionServiceHealth(): Promise<boolean> {
       }
     );
 
-    return response.data?.status === 'ok';
+    if (response.data?.status !== 'ok') {
+      return 'unhealthy';
+    }
+
+    return response.data.executionEnabled === false ? 'disabled' : 'healthy';
   } catch (error) {
-    return false;
+    return 'unhealthy';
   }
 }

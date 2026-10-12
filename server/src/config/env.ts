@@ -4,7 +4,7 @@
  * Uses Zod to validate all environment variables at startup.
  * - In development: MongoDB URI is optional (server can start without DB).
  * - In production: MongoDB URI and JWT_SECRET are required.
- * - EXECUTION_SERVICE_URL is optional (execution service not yet used).
+ * - EXECUTION_SERVICE_URL is optional; code execution remains disabled until a secure sandbox is configured.
  * - Never exposes credentials in logs or errors.
  */
 

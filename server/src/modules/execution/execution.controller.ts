@@ -7,12 +7,17 @@
 import { Request, Response, NextFunction } from 'express';
 import { Types } from 'mongoose';
 import { validateExecuteCodeRequest } from './execution.validation.js';
-import { executeCode, getSupportedLanguages, checkExecutionServiceHealth } from './execution.service.js';
+import {
+  checkExecutionServiceHealth,
+  executeCode,
+  getSupportedLanguages,
+} from './execution.service.js';
 import { Project } from '../../models/Project.model.js';
 import { File } from '../../models/File.model.js';
 import { ProjectMember } from '../../models/ProjectMember.model.js';
 import { AppError } from '../../middleware/errorHandler.js';
 import logger from '../../utils/logger.js';
+import { EXECUTION_ERRORS } from './execution.types.js';
 
 /**
  * Check if user has execution permission for a project
@@ -102,7 +107,8 @@ export async function executeCodeHandler(
       next(error);
     } else if (error instanceof Error) {
       logger.error('Execution error', { error: error.message });
-      next(new AppError(error.message, 500));
+      const statusCode = error.message === EXECUTION_ERRORS.EXECUTION_DISABLED ? 503 : 500;
+      next(new AppError(error.message, statusCode));
     } else {
       next(new AppError('Execution failed', 500));
     }
@@ -143,12 +149,12 @@ export async function healthCheckHandler(
   next: NextFunction
 ): Promise<void> {
   try {
-    const isHealthy = await checkExecutionServiceHealth();
+    const status = await checkExecutionServiceHealth();
     
     res.json({
       success: true,
       data: {
-        status: isHealthy ? 'healthy' : 'unhealthy',
+        status,
         timestamp: new Date().toISOString(),
       },
     });

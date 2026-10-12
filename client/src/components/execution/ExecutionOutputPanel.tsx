@@ -28,7 +28,6 @@ export default function ExecutionOutputPanel({
     isExecuting,
     result,
     error,
-    execute,
     clearResult,
     clearError,
   } = useExecutionStore();
@@ -39,10 +38,6 @@ export default function ExecutionOutputPanel({
       useExecutionStore.getState().loadLanguages();
     }
   }, [isOpen]);
-
-  const handleExecute = async () => {
-    await execute(projectId, fileId, language, code);
-  };
 
   const handleClose = () => {
     clearResult();
@@ -63,21 +58,12 @@ export default function ExecutionOutputPanel({
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            onClick={handleExecute}
-            disabled={isExecuting || !code.trim()}
+            disabled
             isLoading={isExecuting}
+            title="Code execution is disabled until a secure sandbox runtime is configured"
           >
-            {isExecuting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Running...
-              </>
-            ) : (
-              <>
-                <Play className="mr-2 h-4 w-4" />
-                Run
-              </>
-            )}
+            <Play className="mr-2 h-4 w-4" />
+            Run disabled
           </Button>
           <button
             onClick={handleClose}
@@ -159,8 +145,8 @@ export default function ExecutionOutputPanel({
         {!result && !error && !isExecuting && (
           <div className="flex h-full items-center justify-center text-gray-500">
             <div className="text-center">
-              <Play className="mx-auto h-12 w-12 text-gray-300" />
-              <p className="mt-2">Click "Run" to execute your code</p>
+              <AlertCircle className="mx-auto h-8 w-8 text-gray-400" />
+              <p className="mt-2">Execution is disabled until a secure sandbox runtime is configured.</p>
             </div>
           </div>
         )}

@@ -43,6 +43,7 @@ export const EXECUTION_ERRORS = {
   INPUT_TOO_LARGE: 'Input size exceeds limit',
   EXECUTION_TIMEOUT: 'Execution timed out',
   EXECUTION_FAILED: 'Execution failed',
+  EXECUTION_DISABLED: 'Code execution is disabled until a secure sandbox runtime is configured',
   SERVICE_UNAVAILABLE: 'Execution service unavailable',
   PERMISSION_DENIED: 'Permission denied',
   PROJECT_NOT_FOUND: 'Project not found',

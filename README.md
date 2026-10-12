@@ -98,7 +98,8 @@ See [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) for detailed structure.
 - ✅ **Step 3**: Authentication & user management (JWT, bcrypt, HTTP-only cookies)
 - ✅ **Step 4**: Project & file management (CRUD, optimistic concurrency, path validation)
 - ✅ **Step 5**: Frontend dashboard, project management, file explorer, Monaco editor
-- 🔲 **Step 6**: Real-time collaboration (Yjs + Socket.IO) (next)
+- ✅ **Step 6**: Real-time collaboration (Yjs + Socket.IO + MongoDB persistence)
+- 🔲 **Step 7**: Chat system (future)
 
 ## Documentation
 

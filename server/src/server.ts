@@ -4,8 +4,8 @@
  * - Loads and validates environment configuration.
  * - Connects to MongoDB when configured.
  * - Starts the Express HTTP server.
+ * - Initializes Socket.IO for real-time collaboration.
  * - Handles graceful shutdown (SIGINT, SIGTERM).
- * - Does NOT initialize Socket.IO in this step.
  *
  * Startup policy:
  * - Development: Server starts even without MongoDB (database-disabled mode).
@@ -17,6 +17,7 @@ import http from 'http';
 import app from './app.js';
 import { loadEnv, isProduction, isTest } from './config/env.js';
 import { connectDatabase, disconnectDatabase, getDatabaseStatus } from './config/database.js';
+import { initializeSocketIO, closeSocketIO } from './sockets/socket.server.js';
 import logger from './utils/logger.js';
 
 // Track whether shutdown is in progress to prevent duplicate handling
@@ -81,10 +82,16 @@ async function start(): Promise<void> {
       healthEndpoint: `http://localhost:${port}/api/v1/health`,
     });
 
-    // 4. Set up graceful shutdown handlers
+    // 4. Initialize Socket.IO for real-time collaboration
+    if (!isTest()) {
+      initializeSocketIO(httpServer!);
+      logger.info('Socket.IO initialized for real-time collaboration');
+    }
+
+    // 5. Set up graceful shutdown handlers
     setupShutdownHandlers();
 
-    // 5. Handle unhandled rejections and exceptions
+    // 6. Handle unhandled rejections and exceptions
     setupProcessHandlers();
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown startup error';
@@ -101,6 +108,14 @@ async function shutdown(signal: string): Promise<void> {
   isShuttingDown = true;
 
   logger.info(`Received ${signal}. Starting graceful shutdown...`);
+
+  // Close Socket.IO server
+  try {
+    await closeSocketIO();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error during Socket.IO shutdown', { error: message });
+  }
 
   // Stop accepting new connections
   if (httpServer) {

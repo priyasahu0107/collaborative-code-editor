@@ -8,12 +8,13 @@
  * Middleware order:
  * 1. Security (Helmet)
  * 2. CORS
- * 3. Request logging (safe — no sensitive data)
- * 4. Body parsing
- * 5. Cookie parsing
- * 6. Routes
- * 7. 404 handler
- * 8. Error handler
+ * 3. Request ID (for tracing)
+ * 4. Request logging (safe — no sensitive data)
+ * 5. Body parsing
+ * 6. Cookie parsing
+ * 7. Routes
+ * 8. 404 handler
+ * 9. Error handler
  */
 
 import express from 'express';
@@ -24,6 +25,8 @@ import cookieParser from 'cookie-parser';
 import { getCorsOptions } from './config/cors.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFoundHandler } from './middleware/notFound.js';
+import { requestIdMiddleware } from './middleware/requestId.js';
+import { performanceMonitor, getPerformanceMetricsHandler } from './middleware/performanceMonitor.js';
 import healthRoutes from './routes/health.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import projectRoutes from './modules/projects/project.routes.js';
@@ -45,6 +48,14 @@ try {
   // Fallback for testing: allow all origins when env not loaded
   app.use(cors({ origin: true, credentials: true }));
 }
+
+// ─── Request ID ──────────────────────────────────────────────────────────────
+// Generate unique request ID for tracing and debugging
+app.use(requestIdMiddleware);
+
+// ─── Performance Monitoring ──────────────────────────────────────────────────
+// Track request performance metrics
+app.use(performanceMonitor);
 
 // ─── Request Logging ─────────────────────────────────────────────────────────
 // Use morgan with a safe format that excludes sensitive headers and bodies

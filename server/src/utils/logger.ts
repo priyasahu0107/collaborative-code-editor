@@ -5,7 +5,10 @@
  * - Avoids logging request bodies.
  * - Avoids logging MongoDB URIs, JWT secrets, or other credentials.
  * - Supports different log levels for development and production.
+ * - Supports request ID context for request tracing.
  */
+
+import { AsyncLocalStorage } from 'async_hooks';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -15,6 +18,9 @@ const LOG_LEVELS: Record<LogLevel, number> = {
   warn: 2,
   error: 3,
 };
+
+// Async local storage for request context
+const requestContext = new AsyncLocalStorage<{ requestId?: string }>();
 
 function getMinLevel(): LogLevel {
   const env = process.env['NODE_ENV'];
@@ -29,11 +35,26 @@ function shouldLog(level: LogLevel): boolean {
 
 function formatMessage(level: LogLevel, message: string, meta?: Record<string, unknown>): string {
   const timestamp = new Date().toISOString();
-  const base = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
+  const context = requestContext.getStore();
+  const requestId = context?.requestId;
+  
+  let base = `[${timestamp}] [${level.toUpperCase()}]`;
+  if (requestId) {
+    base += ` [${requestId}]`;
+  }
+  base += ` ${message}`;
+  
   if (meta && Object.keys(meta).length > 0) {
     return `${base} ${JSON.stringify(meta)}`;
   }
   return base;
+}
+
+/**
+ * Run a function with request context
+ */
+export function runWithRequestId<T>(requestId: string, fn: () => T): T {
+  return requestContext.run({ requestId }, fn);
 }
 
 /**
@@ -84,6 +105,13 @@ export const logger = {
   error(message: string, meta?: Record<string, unknown>): void {
     if (!shouldLog('error')) return;
     console.error(formatMessage('error', message, meta ? redact(meta) : undefined));
+  },
+
+  /**
+   * Get current request ID from context
+   */
+  getRequestId(): string | undefined {
+    return requestContext.getStore()?.requestId;
   },
 };
 

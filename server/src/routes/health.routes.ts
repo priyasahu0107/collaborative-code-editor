@@ -6,6 +6,7 @@
 
 import { Router } from 'express';
 import { getHealth, getLiveness, getReadiness } from '../controllers/health.controller.js';
+import { getPerformanceMetricsHandler } from '../middleware/performanceMonitor.js';
 
 const router = Router();
 
@@ -17,5 +18,8 @@ router.get('/live', getLiveness);
 
 // GET /api/v1/health/ready — Readiness probe
 router.get('/ready', getReadiness);
+
+// GET /api/v1/health/metrics — Performance metrics
+router.get('/metrics', getPerformanceMetricsHandler);
 
 export default router;

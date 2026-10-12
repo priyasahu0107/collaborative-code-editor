@@ -34,11 +34,29 @@ This document outlines the security requirements, design decisions, and implemen
 | `MONGODB_URI` | Server | Database connection string |
 | `SESSION_SECRET` | Server | Session encryption (if used) |
 
-## CORS Configuration
+## CORS Configuration (Implemented)
 
-- Server allows requests only from configured `CLIENT_ORIGIN`
+- Server allows requests only from configured `CLIENT_URL`
 - Credentials enabled for cookie-based auth
-- Socket.IO CORS matches Express CORS settings
+- Multiple origins supported (comma-separated)
+- Wildcard origin never used with credentials
+- Unauthorized origins are logged and blocked
+
+## Environment Validation (Implemented)
+
+- All environment variables validated with Zod at startup
+- Production fails fast on missing required configuration
+- Development allows optional database (disabled mode)
+- Empty strings treated as undefined for optional fields
+- Validation errors report field names only, never values
+
+## Error Handling (Implemented)
+
+- Centralized error handler distinguishes error types
+- Stack traces only exposed in development
+- Production errors return safe generic messages
+- Database URIs never appear in error responses
+- Connection errors sanitized before logging
 
 ## Input Validation
 

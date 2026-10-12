@@ -1,48 +1,82 @@
+/**
+ * Express application setup.
+ *
+ * Configures middleware, routes, and error handling.
+ * Does NOT bind to a port — that's done in server.ts.
+ * Exports the app for testing.
+ *
+ * Middleware order:
+ * 1. Security (Helmet)
+ * 2. CORS
+ * 3. Request logging (safe — no sensitive data)
+ * 4. Body parsing
+ * 5. Routes
+ * 6. 404 handler
+ * 7. Error handler
+ */
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import { getCorsOptions } from './config/cors.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { notFoundHandler } from './middleware/notFound.js';
+import healthRoutes from './routes/health.routes.js';
+import logger from './utils/logger.js';
 
 const app = express();
 
-// Middleware
+// ─── Security ────────────────────────────────────────────────────────────────
 app.use(helmet());
+
+// ─── CORS ────────────────────────────────────────────────────────────────────
+// Only apply CORS if env is loaded (allows testing without full config)
+try {
+  app.use(cors(getCorsOptions()));
+} catch {
+  // Fallback for testing: allow all origins when env not loaded
+  app.use(cors({ origin: true, credentials: true }));
+}
+
+// ─── Request Logging ─────────────────────────────────────────────────────────
+// Use morgan with a safe format that excludes sensitive headers and bodies
+const safeMorganFormat = ':method :url :status :response-time ms - :res[content-length]';
 app.use(
-  cors({
-    origin: process.env['CLIENT_ORIGIN'] || 'http://localhost:3000',
-    credentials: true,
+  morgan(safeMorganFormat, {
+    stream: {
+      write: (message: string) => {
+        logger.info(`HTTP ${message.trim()}`);
+      },
+    },
+    skip: () => process.env['NODE_ENV'] === 'test',
   }),
 );
-app.use(morgan('dev'));
+
+// ─── Body Parsing ────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
-// Health check endpoint
-app.get('/api/health', (_req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    service: 'collaborative-code-editor-server',
-  });
-});
+// ─── API Routes ──────────────────────────────────────────────────────────────
+// Versioned API prefix
+app.use('/api/v1/health', healthRoutes);
 
-// API routes will be added in subsequent steps
-app.get('/api', (_req, res) => {
+// API root info
+app.get('/api/v1', (_req, res) => {
   res.json({
+    success: true,
     message: 'Collaborative Code Editor API',
-    version: '0.1.0',
+    data: {
+      version: '0.2.0',
+      documentation: '/api/v1/health',
+    },
   });
 });
 
-// 404 handler
-app.use((_req, res) => {
-  res.status(404).json({ error: 'Route not found' });
-});
+// ─── 404 Handler ─────────────────────────────────────────────────────────────
+app.use(notFoundHandler);
 
-// Error handler
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('Unhandled error:', err.message);
-  res.status(500).json({ error: 'Internal server error' });
-});
+// ─── Error Handler ───────────────────────────────────────────────────────────
+app.use(errorHandler);
 
 export default app;

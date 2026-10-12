@@ -50,7 +50,18 @@ cp server/.env.example server/.env
 # Start development servers
 npm run dev:client   # Frontend on http://localhost:3000
 npm run dev:server   # Backend on http://localhost:5000
+
+# Verify the backend is running
+curl http://localhost:5000/api/v1/health
+curl http://localhost:5000/api/v1/health/live
+curl http://localhost:5000/api/v1/health/ready
+
+# Run server tests
+npm run test:server
 ```
+
+> **Note**: The server starts without MongoDB in development mode. Health endpoints work immediately.
+> Set `MONGODB_URI` in `server/.env` to enable database connectivity.
 
 ## Project Structure
 
@@ -71,11 +82,22 @@ See [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) for detailed structure.
 |---------|-------------|
 | `npm run dev` | Start frontend dev server |
 | `npm run dev:server` | Start backend dev server |
+| `npm run dev:execution` | Start execution service |
 | `npm run build` | Build frontend for production |
 | `npm run build:all` | Build all workspaces |
 | `npm run typecheck` | Type-check all workspaces |
+| `npm run test` | Run all workspace tests |
+| `npm run test:server` | Run server tests |
 | `npm run format` | Format code with Prettier |
 | `npm run format:check` | Check formatting |
+
+## Current Status
+
+- ✅ **Step 1**: Foundation setup (monorepo, configs, docs)
+- ✅ **Step 2**: Backend foundation (Express, env validation, MongoDB, health checks)
+- 🔲 **Step 3**: Authentication & user management (next)
+- 🔲 **Step 4**: Project management
+- 🔲 **Step 5**: Real-time collaboration
 
 ## Documentation
 

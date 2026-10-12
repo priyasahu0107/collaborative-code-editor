@@ -15,7 +15,28 @@ The project uses a comprehensive testing approach with different tools for diffe
 
 ### Status
 
-> **Note:** Testing infrastructure is planned for future phases. Currently, test scripts are configured as placeholders. Actual test files will be added as features are implemented.
+> **Step 2 (Backend Foundation)**: Server tests are configured and implemented.
+> Tests cover health endpoints, app routing, error handling, CORS, and environment validation.
+> Tests do NOT require real MongoDB credentials — database state is mocked/isolated.
+
+**Test commands:**
+```bash
+# Run server tests
+npm run test:server
+
+# Run server tests in watch mode
+npm run test:watch --workspace=server
+
+# Run with coverage
+npm run test:coverage --workspace=server
+```
+
+**Test files:**
+- `server/tests/health.test.ts` — Health, liveness, readiness endpoints
+- `server/tests/app.test.ts` — 404 handler, CORS, security headers, content types
+- `server/tests/env.test.ts` — Environment validation, mode helpers
+
+> **Client tests**: Not yet configured. Vitest + React Testing Library will be added in a future step.
 
 ## Test Commands
 

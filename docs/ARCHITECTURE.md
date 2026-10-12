@@ -87,6 +87,32 @@ Client ← Socket.IO ← Server ← HTTP ← (result)
 - **Server ↔ Execution Service**: Internal network, no external exposure
 - **Execution Service**: Isolated container, no filesystem access to host, resource limits enforced
 
+## Backend Structure (Step 2)
+
+The server follows a layered architecture:
+
+```
+server/src/
+├── config/          # Environment, database, CORS configuration
+├── controllers/     # Route handler logic
+├── middleware/       # Error handling, 404, auth (future)
+├── routes/          # Express route definitions
+├── types/           # TypeScript type augmentations
+├── utils/           # Logger, helpers
+├── app.ts           # Express app setup (no port binding)
+└── server.ts        # HTTP server + startup + shutdown
+```
+
+### Configuration Layer
+- `env.ts` — Zod-validated environment variables. Fails fast in production.
+- `database.ts` — Mongoose connection with status tracking. Supports disabled mode.
+- `cors.ts` — Origin-restricted CORS with credential support.
+
+### Startup Policy
+- **Development**: Server starts even without MongoDB (database-disabled mode).
+- **Production**: Fails fast if required configuration is missing.
+- **Test**: Does not connect to database or bind to real ports.
+
 ## Technology Decisions
 
 | Decision | Choice | Rationale |
@@ -98,3 +124,4 @@ Client ← Socket.IO ← Server ← HTTP ← (result)
 | State | Zustand | Lightweight, TypeScript-first, simple API |
 | Validation | Zod | Runtime + compile-time types, composable schemas |
 | Execution | Docker isolation | Security, resource control, reproducibility |
+| Testing | Vitest + Supertest | Fast, TypeScript-native, compatible with ESM |

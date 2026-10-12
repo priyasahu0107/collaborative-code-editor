@@ -97,7 +97,8 @@ See [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) for detailed structure.
 - ✅ **Step 2**: Backend foundation (Express, env validation, MongoDB, health checks)
 - ✅ **Step 3**: Authentication & user management (JWT, bcrypt, HTTP-only cookies)
 - ✅ **Step 4**: Project & file management (CRUD, optimistic concurrency, path validation)
-- 🔲 **Step 5**: Real-time collaboration (next)
+- ✅ **Step 5**: Frontend dashboard, project management, file explorer, Monaco editor
+- 🔲 **Step 6**: Real-time collaboration (Yjs + Socket.IO) (next)
 
 ## Documentation
 

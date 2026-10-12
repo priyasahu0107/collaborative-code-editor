@@ -7,8 +7,8 @@
 ## Root Cause
 
 The Vite build configuration was outputting build artifacts to the wrong directory:
-- **Configured**: `outDir: '../dist'` (root level)
-- **Expected**: `outDir: 'dist'` (client level)
+- **Configured**: `outDir: 'dist'` (client level)
+- **Expected**: `outDir: '../dist'` (root level)
 - **Result**: Preview server couldn't locate built assets
 
 ## Solution
@@ -19,36 +19,36 @@ The Vite build configuration was outputting build artifacts to the wrong directo
 ```typescript
 // Changed from:
 build: {
-  outDir: '../dist',  // ❌ Wrong location
+  outDir: 'dist',  // ❌ Wrong location
   emptyOutDir: true,
   sourcemap: true,
 }
 
 // To:
 build: {
-  outDir: 'dist',  // ✅ Correct location
+  outDir: '../dist',  // ✅ Correct location
   emptyOutDir: true,
   sourcemap: true,
 }
 ```
 
 ### Rebuild
-Executed `npm run build` which completed successfully in 15.52 seconds.
+Executed `npm run build` which completed successfully in 15.04 seconds.
 
 ## Verification
 
 ### Build Output
 ```
 ✓ 2075 modules transformed
-dist/index.html                     0.57 kB │ gzip:   0.37 kB
-dist/assets/index-BZDyqC6T.css     76.38 kB │ gzip:  13.81 kB
-dist/assets/index-QcBsLJeu.js   2,592.33 kB │ gzip: 698.36 kB
-✓ built in 15.52s
+../dist/index.html                     0.57 kB │ gzip:   0.37 kB
+../dist/assets/index-BZDyqC6T.css     76.38 kB │ gzip:  13.81 kB
+../dist/assets/index-QcBsLJeu.js   2,592.33 kB │ gzip: 698.36 kB
+✓ built in 15.04s
 ```
 
 ### File Structure
 ```
-client/dist/
+dist/
 ├── index.html                    ✅ Valid
 ├── assets/
 │   ├── index-QcBsLJeu.js        ✅ Valid (2.59 MB)
@@ -96,8 +96,8 @@ client/dist/
 npm run build
 
 # Verify build output
-ls -la client/dist/
-ls -la client/dist/assets/
+ls -la dist/
+ls -la dist/assets/
 ```
 
 ## Status

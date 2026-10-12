@@ -176,7 +176,7 @@ No environment variable changes required.
 
 ✅ **RESOLVED**
 
-The preview error has been fixed by correcting the build output directory configuration. The application now builds to the standard location and the preview loads successfully.
+The preview error has been fixed by correcting the build output directory configuration. The application now builds to the root `dist/` directory where the preview system expects it, and the preview loads successfully.
 
 ## Next Steps
 

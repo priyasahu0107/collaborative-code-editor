@@ -38,6 +38,5 @@ tmp/
 temp/
 .cache/
 
-# Docker volumes
-docker-data/
+# Local runtime data
 .next/

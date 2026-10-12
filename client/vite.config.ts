@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
+const isCodespaces = process.env['CODESPACES'] === 'true';
+
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: '/',
@@ -16,7 +18,8 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
     hmr: {
-      port: 3000,
+      protocol: isCodespaces ? 'wss' : 'ws',
+      clientPort: isCodespaces ? 443 : 3000,
     },
     proxy: {
       '/api': {

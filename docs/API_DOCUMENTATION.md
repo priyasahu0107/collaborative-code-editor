@@ -531,7 +531,7 @@ The server is configured to accept credentials from `CLIENT_URL` (default: `http
 ## Code Execution Endpoints
 
 ### POST /api/v1/execution/execute
-Execute code in a secure, isolated Docker container.
+Code execution is disabled. Valid requests are rejected with `503 EXECUTION_DISABLED`; source code is not evaluated.
 
 **Authentication**: Required (JWT cookie)
 
@@ -557,26 +557,17 @@ Execute code in a secure, isolated Docker container.
 - `stdin` (optional): Standard input for the program (max 10KB)
 - `timeout` (optional): Execution timeout in milliseconds (1000-30000, default: 10000)
 
-**Response (200):**
+**Response (503 while execution is disabled):**
 ```json
 {
-  "success": true,
-  "data": {
-    "stdout": "Hello, World!\n",
-    "stderr": "",
-    "exitCode": 0,
-    "executionTime": 123,
-    "timedOut": false
+  "success": false,
+  "message": "Code execution is disabled until a secure sandbox runtime is configured",
+  "error": {
+    "code": "APPERROR",
+    "statusCode": 503
   }
 }
 ```
-
-**Response Fields:**
-- `stdout`: Standard output from the program
-- `stderr`: Standard error output
-- `exitCode`: Process exit code (0 = success)
-- `executionTime`: Execution time in milliseconds
-- `timedOut`: Whether the execution timed out
 
 **Error Responses:**
 
@@ -613,19 +604,19 @@ Execute code in a secure, isolated Docker container.
 }
 ```
 
-**503 Service Unavailable** - Execution service not running:
+**503 Service Unavailable** - Execution API unavailable or code execution disabled:
 ```json
 {
   "success": false,
   "error": {
-    "code": "SERVICE_UNAVAILABLE",
-    "message": "Execution service unavailable"
+    "code": "APPERROR",
+    "message": "Code execution is disabled until a secure sandbox runtime is configured"
   }
 }
 ```
 
 ### GET /api/v1/execution/languages
-Get list of supported programming languages.
+Get language metadata. Every language is currently marked unsupported.
 
 **Authentication**: Required
 
@@ -637,17 +628,17 @@ Get list of supported programming languages.
     {
       "id": "javascript",
       "name": "JavaScript",
-      "supported": true
+      "supported": false
     },
     {
       "id": "typescript",
       "name": "TypeScript",
-      "supported": true
+      "supported": false
     },
     {
       "id": "python",
       "name": "Python",
-      "supported": true
+      "supported": false
     }
   ]
 }
@@ -663,23 +654,23 @@ Check execution service health status.
 {
   "success": true,
   "data": {
-    "status": "healthy",
+    "status": "disabled",
     "timestamp": "2024-01-15T10:30:00.000Z"
   }
 }
 ```
 
 **Response Fields:**
-- `status`: "healthy" or "unhealthy"
+- `status`: "disabled" or "unhealthy"
 - `timestamp`: Current timestamp
 
 ### Supported Languages
 
 | Language | ID | Runtime | Status |
 |----------|-----|---------|--------|
-| JavaScript | `javascript` | Node.js 20 | ✅ Supported |
-| TypeScript | `typescript` | Node.js 20 + tsc | ✅ Supported |
-| Python | `python` | Python 3.11 | ✅ Supported |
+| JavaScript | `javascript` | None | Disabled |
+| TypeScript | `typescript` | None | Disabled |
+| Python | `python` | None | Disabled |
 
 ### Execution Limits
 
@@ -687,17 +678,10 @@ Check execution service health status.
 |----------|-------|
 | Code size | 64KB |
 | Input size | 10KB |
-| Output size | 1MB (stdout/stderr) |
-| Execution time | 30 seconds max |
-| Memory | 256MB |
-| CPU | 1 core |
-| Processes | 64 max |
+| Execution | Disabled; submitted source is never evaluated |
 
 ### Security Features
 
-- Docker container isolation
-- No network access
-- Read-only filesystem
-- Non-root user execution
-- Automatic cleanup
-- Resource limits enforced
+- Request shape and source-size validation only
+- No execution runtime is configured
+- No sandbox or runtime resource limits are claimed

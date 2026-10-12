@@ -4,25 +4,17 @@
 
 import { useEffect } from 'react';
 import { useExecutionStore } from '../../stores/executionStore';
-import { X, Play, Loader2, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
+import { X, Play, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface ExecutionOutputPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  projectId: string;
-  fileId?: string;
-  language: string;
-  code: string;
 }
 
 export default function ExecutionOutputPanel({
   isOpen,
   onClose,
-  projectId,
-  fileId,
-  language,
-  code,
 }: ExecutionOutputPanelProps) {
   const {
     isExecuting,

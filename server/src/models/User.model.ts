@@ -7,7 +7,7 @@
  * - Unique indexes on email.
  */
 
-import { Schema, model, models, type Document, type Model } from 'mongoose';
+import mongoose, { Schema, model, type Document, type Model } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 const BCRYPT_ROUNDS = 12;
@@ -141,6 +141,6 @@ userSchema.methods.toSafeJSON = function (): Omit<IUserJSON, 'passwordHash'> {
  * User model.
  */
 export const User: Model<IUser> =
-  models.User || model<IUser>('User', userSchema);
+  mongoose.models.User || model<IUser>('User', userSchema);
 
 export default User;

@@ -43,14 +43,12 @@ The application follows a three-service architecture:
   - Proxy execution requests to the execution service
 
 ### Execution Service (`execution-service/`)
-- **Role**: Isolated code execution environment
-- **Technology**: Node.js, Express, TypeScript, Docker
+- **Role**: Separate execution API; execution is disabled until a secure sandbox runtime is deployed
+- **Technology**: Node.js, Express, TypeScript
 - **Responsibilities**:
-  - Receive code execution requests
-  - Execute code in sandboxed environment
-  - Enforce resource limits (CPU, memory, time)
-  - Return stdout, stderr, and exit codes
-  - Prevent malicious code execution
+  - Report execution availability and supported languages
+  - Reject execution requests with `503 EXECUTION_DISABLED`
+  - Never evaluate user code or spawn a process for user source
 
 ## Communication Flow
 
@@ -68,8 +66,8 @@ Client A → Socket.IO → Server → Yjs Sync → Socket.IO → Client B
 
 ### Code Execution Flow
 ```
-Client → Socket.IO → Server → HTTP → Execution Service
-Client ← Socket.IO ← Server ← HTTP ← (result)
+Authenticated client → API server → execution API
+Execution API → 503 EXECUTION_DISABLED → API server → client
 ```
 
 ## Data Flow
@@ -85,7 +83,7 @@ Client ← Socket.IO ← Server ← HTTP ← (result)
 - **Client ↔ Server**: HTTPS + WSS in production, JWT authentication
 - **Server ↔ MongoDB**: Connection string with authentication
 - **Server ↔ Execution Service**: Internal network, no external exposure
-- **Execution Service**: Isolated container, no filesystem access to host, resource limits enforced
+- **Execution Service**: Code remains disabled until isolation can be enforced by the host runtime
 
 ## Backend Structure (Step 2)
 
@@ -123,5 +121,5 @@ server/src/
 | Editor | Monaco | VS Code quality, language support, extensible |
 | State | Zustand | Lightweight, TypeScript-first, simple API |
 | Validation | Zod | Runtime + compile-time types, composable schemas |
-| Execution | Docker isolation | Security, resource control, reproducibility |
+| Execution | Disabled pending OS-enforced isolation | Untrusted source must not run in the API process or an unrestricted child process |
 | Testing | Vitest + Supertest | Fast, TypeScript-native, compatible with ESM |

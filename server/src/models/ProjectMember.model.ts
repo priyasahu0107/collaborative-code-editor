@@ -6,7 +6,7 @@
  * - Separate from Project model for better separation of concerns.
  */
 
-import { Schema, model, models, type Document, type Model, Types } from 'mongoose';
+import mongoose, { Schema, model, type Document, type Model, Types } from 'mongoose';
 
 /**
  * Member role types.
@@ -107,6 +107,6 @@ projectMemberSchema.methods.toSafeJSON = function (): IProjectMemberJSON {
  * ProjectMember model.
  */
 export const ProjectMember: Model<IProjectMember> =
-  models.ProjectMember || model<IProjectMember>('ProjectMember', projectMemberSchema);
+  mongoose.models.ProjectMember || model<IProjectMember>('ProjectMember', projectMemberSchema);
 
 export default ProjectMember;

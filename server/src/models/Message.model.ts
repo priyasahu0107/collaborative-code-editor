@@ -6,7 +6,7 @@
  * - Supports pagination and chronological retrieval.
  */
 
-import { Schema, model, models, type Document, type Model, Types } from 'mongoose';
+import mongoose, { Schema, model, type Document, type Model, Types } from 'mongoose';
 
 /**
  * Message document interface.
@@ -91,6 +91,6 @@ messageSchema.methods.toSafeJSON = function (): IMessageJSON {
  * Message model.
  */
 export const Message: Model<IMessage> =
-  models.Message || model<IMessage>('Message', messageSchema);
+  mongoose.models.Message || model<IMessage>('Message', messageSchema);
 
 export default Message;

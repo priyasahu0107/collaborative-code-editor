@@ -1,5 +1,7 @@
 # Step 10: Production-Grade Remediation Plan
 
+> Historical plan only. Container-related remediation items are obsolete; use the current [DEPLOYMENT.md](DEPLOYMENT.md) and [CODE_EXECUTION.md](CODE_EXECUTION.md).
+
 ## Executive Summary
 
 This document outlines the prioritized remediation plan for transforming the Real-Time Collaborative Code Editor into a production-grade, deployment-ready application.

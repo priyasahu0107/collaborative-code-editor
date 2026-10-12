@@ -6,7 +6,7 @@
  * - Prevents reuse of accepted/revoked/expired invitations.
  */
 
-import { Schema, model, models, type Document, type Model, Types } from 'mongoose';
+import mongoose, { Schema, model, type Document, type Model, Types } from 'mongoose';
 import type { MemberRole } from './ProjectMember.model.js';
 
 /**
@@ -148,6 +148,6 @@ invitationSchema.methods.toSafeJSON = function (): IInvitationJSON {
  * Invitation model.
  */
 export const Invitation: Model<IInvitation> =
-  models.Invitation || model<IInvitation>('Invitation', invitationSchema);
+  mongoose.models.Invitation || model<IInvitation>('Invitation', invitationSchema);
 
 export default Invitation;

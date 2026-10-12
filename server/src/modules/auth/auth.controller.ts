@@ -56,7 +56,7 @@ export async function register(
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
-       getUserProfile(user),
+      data: getUserProfile(user),
     });
   } catch (error) {
     next(error);
@@ -102,7 +102,7 @@ export async function login(
     res.json({
       success: true,
       message: 'Login successful',
-       getUserProfile(user),
+      data: getUserProfile(user),
     });
   } catch (error) {
     next(error);
@@ -161,7 +161,7 @@ export async function getCurrentUser(
     res.json({
       success: true,
       message: 'Current user retrieved',
-       getUserProfile(user),
+      data: getUserProfile(user),
     });
   } catch (error) {
     next(error);

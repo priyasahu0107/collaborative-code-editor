@@ -145,14 +145,6 @@ These paths resolve correctly when served from `client/dist/`.
 
 ## Deployment Considerations
 
-### Docker Build
-The Dockerfile may need adjustment if it was referencing the old dist location:
-
-```dockerfile
-# Check if Dockerfile references ../dist and update to dist
-COPY client/dist/ /usr/share/nginx/html/
-```
-
 ### CI/CD Pipeline
 Verify that any deployment scripts are looking for assets in `client/dist/` rather than root `dist/`.
 
@@ -182,7 +174,6 @@ The preview error has been fixed by correcting the build output directory config
 
 1. ✅ Preview should now load successfully
 2. Continue with remaining Step 10 tasks
-3. Verify Docker builds use correct dist path
 4. Update any deployment documentation if needed
 
 ---

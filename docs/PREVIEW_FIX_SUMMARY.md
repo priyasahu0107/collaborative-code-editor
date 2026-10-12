@@ -109,7 +109,6 @@ The build configuration is correct and all files are in the expected location. T
 ## Next Steps
 
 1. Preview should load successfully
-2. Verify Docker builds reference correct dist path
 3. Update deployment documentation if needed
 4. Continue with remaining production readiness tasks
 

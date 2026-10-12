@@ -2,7 +2,7 @@
 
 ## Scope
 
-The Collaborative Code Editor is a web-based platform that enables multiple developers to write, edit, and execute code together in real time. It combines the power of a professional code editor (Monaco) with real-time synchronization (Yjs CRDTs) and instant code execution in isolated containers.
+The Collaborative Code Editor is a web-based platform that enables multiple developers to write and edit code together in real time. It combines Monaco with real-time synchronization through Yjs CRDTs. Code execution is disabled until a secure OS-enforced sandbox runtime is available.
 
 ## Target Users
 
@@ -18,7 +18,7 @@ The Collaborative Code Editor is a web-based platform that enables multiple deve
 - [x] TypeScript configuration for all services
 - [x] Basic Express server scaffold
 - [x] React + Vite + Tailwind client scaffold
-- [x] Execution service scaffold with Dockerfile
+- [x] Execution API scaffold; source execution is disabled pending a secure sandbox
 - [x] Documentation structure
 
 ### Phase 2 — Authentication & Projects
@@ -40,10 +40,9 @@ The Collaborative Code Editor is a web-based platform that enables multiple deve
 - [ ] Online user list
 
 ### Phase 5 — Code Execution
-- [ ] Isolated execution service
-- [ ] Multi-language support (JavaScript, Python, etc.)
-- [ ] Input/output handling
-- [ ] Execution timeout and resource limits
+- [x] Separate execution API that fails closed
+- [ ] OS-enforced sandbox design and hostile-code verification
+- [ ] Re-enable supported languages only after isolation is verified
 
 ### Phase 6 — Polish & Production
 - [ ] Error handling and logging

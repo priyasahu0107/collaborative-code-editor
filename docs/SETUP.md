@@ -5,8 +5,7 @@
 - **Node.js** >= 18.x (LTS recommended)
 - **npm** >= 9.x
 - **Git**
-- **MongoDB Atlas** account (free tier works) — or local MongoDB for development
-- **Docker** (optional, for containerized development)
+- **MongoDB Atlas** account (free tier works) — or a locally installed MongoDB server
 
 ## Installation
 
@@ -56,7 +55,7 @@ cp server/.env.example server/.env
 | `JWT_EXPIRES_IN` | JWT expiration time | No | `15m` |
 | `COOKIE_NAME` | Authentication cookie name | No | `auth_token` |
 | `COOKIE_SAME_SITE` | Cookie SameSite attribute | No | `lax` |
-| `EXECUTION_SERVICE_URL` | Execution service URL | Future | — |
+| `EXECUTION_SERVICE_URL` | Optional execution API URL; it does not enable code execution | No | — |
 
 **Notes:**
 - `MONGODB_URI` is optional in development. The server starts in "database-disabled" mode if not set.
@@ -85,10 +84,7 @@ cp server/.env.example server/.env
 #### Option B: Local MongoDB
 
 ```bash
-# Using Docker
-docker run -d -p 27017:27017 --name mongo mongo:7
-
-# Or install locally and start the service
+# Install MongoDB Community Server for your operating system, then start mongod.
 ```
 
 ## Development
@@ -127,7 +123,7 @@ npm run dev:server
 # Terminal 2: Frontend
 npm run dev:client
 
-# Terminal 3: Execution Service (optional)
+# Terminal 3: Execution API (reports execution as disabled)
 npm run dev:execution
 ```
 
@@ -187,6 +183,8 @@ npm run build:client    # Frontend → dist/
 npm run build:server    # Backend → server/dist/
 npm run build:execution # Execution service → execution-service/dist/
 ```
+
+The execution API rejects code execution with `503 EXECUTION_DISABLED`. Do not substitute `eval`, shell commands, or a plain child process for a sandbox.
 
 ## Testing
 

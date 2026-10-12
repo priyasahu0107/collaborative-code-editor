@@ -7,7 +7,7 @@
  * - File count is maintained for quick access.
  */
 
-import { Schema, model, models, type Document, type Model, Types } from 'mongoose';
+import mongoose, { Schema, model, type Document, type Model, Types } from 'mongoose';
 
 /**
  * Project visibility options.
@@ -131,6 +131,6 @@ projectSchema.methods.toSafeJSON = function (): IProjectJSON {
  * Project model.
  */
 export const Project: Model<IProject> =
-  models.Project || model<IProject>('Project', projectSchema);
+  mongoose.models.Project || model<IProject>('Project', projectSchema);
 
 export default Project;

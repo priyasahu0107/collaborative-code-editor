@@ -1,5 +1,7 @@
 # Step 9: Final Integration, Audit & Production Readiness - Completion Report
 
+> Historical snapshot only. Its deployment and code-execution details are no longer current. Code execution is disabled; see [CODE_EXECUTION.md](CODE_EXECUTION.md) and [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## Executive Summary
 
 Step 9 has been completed successfully. A comprehensive audit of the entire Real-Time Collaborative Code Editor project has been performed, covering all 8 previous implementation steps. The project is now **conditionally ready for production deployment** with all critical issues resolved.

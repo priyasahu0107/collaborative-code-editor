@@ -1,5 +1,7 @@
 # Progress
 
+> Current verification and security status is recorded in the final section below; it supersedes earlier implementation claims in this historical checklist.
+
 ## Task Checklist
 
 ### Step 1: Foundation Setup ✅
@@ -606,3 +608,31 @@ npm run build
 4. Create chat UI components
 5. Integrate chat with workspace
 6. Implement message persistence and history
+
+## Current Security and Verification Update (2026-10-12)
+
+### Changes
+
+- Removed all service Dockerfiles, `.dockerignore` files, and Compose configurations; removed their CI build/scan checks and deployment instructions.
+- Removed the Docker executor and its shell/process-launch path. The execution API validates request shape, reports every language unsupported, and returns `503 EXECUTION_DISABLED` without evaluating source.
+- Kept the API server as an HTTP proxy only. Execution health now reports `disabled`; the client Run action is disabled and explains why.
+- Restored the root npm workspace manifest/lockfile after the workspace manifest had been displaced under `client/`. Removed the execution service's unused CORS dependency and `API_SERVER_URL` configuration.
+- Added execution API tests for health, unsupported languages, and fail-closed execution.
+- Fixed Mongoose model-cache imports and collaboration-service relative imports needed for API startup. Restored bcrypt's missing native runtime dependency in the current environment.
+
+### Verification Results
+
+| Check | Actual result |
+|---|---|
+| `npm install` | Passed; regenerated root workspace lockfile. npm reported 5 advisories (3 moderate, 2 critical). |
+| Execution API tests | Passed: 3/3. |
+| Client typecheck and build | Passed; Vite emitted a large-chunk warning. |
+| Execution API typecheck and build | Passed. |
+| Server typecheck/build | Failed: 128 remaining server TypeScript diagnostics. |
+| Workspace tests | Failed: execution API 3/3 passed; server 36 passed, 6 failed, and 29 skipped. Seven server test files failed and two passed. Failures include existing auth mocks, auth configuration assumptions, comma-separated `CLIENT_URL` validation, and integration setup without MongoDB. Client has no configured tests. |
+| `npm run lint` | Command exited 0, but client/server scripts only print “No linter configured yet”; execution service has no lint script. No actual lint analysis ran. |
+| Live execution API | `/health` returned `executionEnabled: false`; a valid `/execute` request returned HTTP 503 `EXECUTION_DISABLED`. |
+| API-to-execution health adapter | Returned `disabled` against the live execution API. |
+| Full API process startup | Passed in development on port 5000 after restoring the missing bcrypt runtime dependency. MongoDB and JWT auth are not configured, so database-backed workflows are unavailable. |
+
+The frontend is running on port 3000, the API on port 5000, and the execution API on port 4100. Vite-proxied API health and readiness requests pass; readiness reports the database as disabled and execution as disabled. Code execution remains intentionally disabled. Do not enable it until an OS-enforced sandbox is deployed and hostile-code isolation tests pass. Authenticated, database-backed application workflows are not verified.

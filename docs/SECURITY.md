@@ -122,28 +122,11 @@ Using `helmet` middleware:
 - **Stack traces**: Only in development logs
 - **Authentication events**: Logged safely (user ID, email — no passwords)
 
-## Code Execution Security (Planned)
+## Code Execution Security
 
-### Isolation Strategy
-The execution service runs in a **separate Docker container** with:
+Code execution is disabled. The separate execution API validates request shape, reports every language as unsupported, and returns `503 EXECUTION_DISABLED` without evaluating source or spawning a process. The API server never executes submitted code.
 
-1. **No host filesystem access** — Container has isolated filesystem
-2. **Resource limits**:
-   - CPU: Limited via Docker `--cpus`
-   - Memory: Limited via Docker `--memory`
-   - Execution time: Hard timeout (e.g., 10 seconds)
-   - Process count: Limited
-3. **No network access** — Container cannot make outbound connections
-4. **Read-only filesystem** — Where possible
-5. **Non-root user** — Execution runs as unprivileged user
-6. **Temporary workspace** — Cleaned up after each execution
-
-### Planned Security Measures
-- Input sanitization before execution
-- Language-specific sandboxing
-- Output size limits
-- Execution queue with rate limiting
-- Malicious code detection (basic patterns)
+Do not enable execution with `eval`, `Function`, a shell command, or a plain child process. Re-enable only after deploying a separately managed runtime that provides OS-enforced isolation, resource limits, no network access by default, per-run filesystem isolation, and reliable cleanup. Application-level input filtering is not a sandbox.
 
 ## Known Limitations
 

@@ -8,12 +8,11 @@ This document explains the purpose of each directory and which code belongs wher
 collaborative-code-editor/
 ├── client/              # Frontend React application
 ├── server/              # Backend Express application
-├── execution-service/   # Isolated code execution service
+├── execution-service/   # Execution API (source execution disabled)
 ├── docs/                # Project documentation
 ├── .gitignore           # Git ignore rules
 ├── .prettierrc.json     # Prettier formatting config
 ├── .prettierignore      # Prettier ignore rules
-├── docker-compose.yml   # Docker Compose for all services
 ├── package.json         # Workspace root (npm workspaces)
 └── README.md            # Project readme
 ```
@@ -118,12 +117,10 @@ server/
 ```
 execution-service/
 ├── src/
-│   ├── runners/         # Language-specific code runners
-│   ├── validators/      # Input validation and sanitization
-│   ├── limits/          # Resource limit enforcement
-│   └── server.ts        # Express server entry point
-├── tests/               # Test files
-├── Dockerfile           # Container definition
+│   ├── app.ts            # Disabled execution API
+│   ├── validators/       # Request validation
+│   └── server.ts         # Express server entry point
+├── tests/               # API and fail-closed behavior tests
 └── package.json         # Dependencies
 ```
 

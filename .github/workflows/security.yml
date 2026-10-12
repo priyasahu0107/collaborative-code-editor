@@ -143,54 +143,6 @@ jobs:
           echo "✅ No hardcoded secrets detected"
 
   # ============================================================================
-  # Docker Security Scan
-  # ============================================================================
-  docker-security-scan:
-    name: Docker Security Scan
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build client Docker image
-        run: docker build -t collab-editor-client:scan ./client
-
-      - name: Scan client image with Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'collab-editor-client:scan'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-
-      - name: Build server Docker image
-        run: docker build -t collab-editor-server:scan ./server
-
-      - name: Scan server image with Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'collab-editor-server:scan'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-
-      - name: Build execution service Docker image
-        run: docker build -t collab-editor-execution:scan ./execution-service
-
-      - name: Scan execution service image with Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'collab-editor-execution:scan'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-
-  # ============================================================================
   # Security Report
   # ============================================================================
   security-report:

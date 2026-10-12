@@ -148,10 +148,6 @@ export default function WorkspacePage() {
           <ExecutionOutputPanel
             isOpen={executionOpen}
             onClose={() => setExecutionOpen(false)}
-            projectId={projectId}
-            fileId={activeFile.id}
-            language={activeFile.language || 'javascript'}
-            code={activeFile.content}
           />
         </div>
       )}

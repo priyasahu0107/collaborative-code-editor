@@ -6,8 +6,8 @@
 
 import * as Y from 'yjs';
 import { Types } from 'mongoose';
-import File from '../models/File.model.js';
-import logger from '../utils/logger.js';
+import File from '../../models/File.model.js';
+import logger from '../../utils/logger.js';
 
 // Store active Yjs documents by room ID
 const activeDocuments = new Map<string, Y.Doc>();

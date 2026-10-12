@@ -3,7 +3,7 @@ import { ApiError } from '../types';
 
 // Create axios instance with base configuration
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '',
   withCredentials: true, // Required for cookie-based auth
   headers: {
     'Content-Type': 'application/json',

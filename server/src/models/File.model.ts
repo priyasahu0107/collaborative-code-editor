@@ -7,7 +7,7 @@
  * - Prevents path traversal and duplicate sibling names.
  */
 
-import { Schema, model, models, type Document, type Model, Types } from 'mongoose';
+import mongoose, { Schema, model, type Document, type Model, Types } from 'mongoose';
 
 /**
  * File entry type.
@@ -162,6 +162,6 @@ fileSchema.methods.toSafeJSON = function (includeContent = false): IFileJSON {
  * File model.
  */
 export const File: Model<IFile> =
-  models.File || model<IFile>('File', fileSchema);
+  mongoose.models.File || model<IFile>('File', fileSchema);
 
 export default File;

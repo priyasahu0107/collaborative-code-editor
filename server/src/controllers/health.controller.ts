@@ -82,8 +82,7 @@ export async function getReadiness(_req: Request, res: Response): Promise<void> 
   const isDbReady = dbStatus === 'connected' || dbStatus === 'disabled';
 
   // Check execution service health
-  let executionServiceStatus: 'healthy' | 'disabled' | 'unhealthy' | 'not_configured' =
-    'not_configured';
+  let executionServiceStatus: 'disabled' | 'unhealthy' | 'not_configured' = 'not_configured';
   try {
     if (env.EXECUTION_SERVICE_URL) {
       executionServiceStatus = await checkExecutionServiceHealth();

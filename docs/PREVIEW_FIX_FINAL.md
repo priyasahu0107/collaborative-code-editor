@@ -140,7 +140,6 @@ The application now builds correctly and the preview server is properly configur
 ## Next Steps
 
 1. ✅ Preview should now load successfully
-2. Verify Docker builds use correct dist path
 3. Update deployment documentation if needed
 4. Continue with production readiness tasks
 

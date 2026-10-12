@@ -1,5 +1,7 @@
 # Final Project Audit - Real-Time Collaborative Code Editor
 
+> Historical snapshot only. Its container and code-execution findings describe an earlier implementation and are not current guidance. Code execution is now disabled; see [CODE_EXECUTION.md](CODE_EXECUTION.md) and [DEPLOYMENT.md](DEPLOYMENT.md).
+
 **Audit Date**: 2024  
 **Auditor**: Senior MERN Stack Architect  
 **Project Version**: Step 9 - Final Integration  

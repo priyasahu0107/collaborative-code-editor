@@ -311,7 +311,7 @@ If room empty: cleanup Yjs document
 
 Step 6 is complete. The next step would be:
 - **Step 7**: Chat System - Real-time messaging in collaboration rooms
-- **Step 8**: Code Execution - Run code in isolated containers
+- **Step 8**: Code Execution - Historical implementation; execution is currently disabled pending a secure sandbox
 - **Step 9**: Advanced Collaboration - Cursor sharing, file locking, etc.
 
 ## Conclusion

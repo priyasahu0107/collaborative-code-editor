@@ -22,16 +22,14 @@ A real-time collaborative code editor that allows multiple users to code togethe
 - **Zod** — Request validation
 
 ### Infrastructure
-- **Docker** + **Docker Compose** — Containerization
 - **npm workspaces** — Monorepo management
-- **Isolated execution service** — Safe code execution
+- **Execution API** — Kept separate; execution is disabled until a secure sandbox is available
 
 ## Prerequisites
 
 - Node.js >= 18.x
 - npm >= 9.x
 - MongoDB Atlas account (or local MongoDB for development)
-- Docker (optional, for containerized development)
 
 ## Quick Start
 
@@ -69,7 +67,7 @@ npm run test:server
 collaborative-code-editor/
 ├── client/              # React frontend
 ├── server/              # Express backend
-├── execution-service/   # Isolated code execution
+├── execution-service/   # Execution API; source execution disabled
 ├── docs/                # Project documentation
 └── package.json         # Workspace root
 ```
@@ -100,7 +98,7 @@ See [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) for detailed structure.
 - ✅ **Step 5**: Frontend dashboard, project management, file explorer, Monaco editor
 - ✅ **Step 6**: Real-time collaboration (Yjs + Socket.IO + MongoDB persistence)
 - ✅ **Step 7**: Chat, invitations & permissions (role-based access, real-time chat, project invitations)
-- ✅ **Step 8**: Code execution service (Docker isolation, multi-language support, security controls)
+- ⚠️ **Code execution**: Disabled until a secure OS-enforced sandbox can be provided
 - 🔲 **Step 9**: Advanced features (future)
 
 ## Documentation

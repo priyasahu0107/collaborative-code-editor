@@ -1,5 +1,7 @@
 # Step 8: Code Execution System - Implementation Summary
 
+> Historical snapshot only. The execution implementation described here has been removed. Current status and security requirements are in [CODE_EXECUTION.md](CODE_EXECUTION.md).
+
 ## Overview
 
 Step 8 implements a complete, secure code execution system that allows users to run code in multiple programming languages within isolated Docker containers. The system provides real-time execution, output display, and comprehensive security controls.

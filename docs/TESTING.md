@@ -107,13 +107,7 @@ server/tests/
 
 ```
 execution-service/tests/
-├── unit/
-│   ├── runners/
-│   │   └── javascriptRunner.test.ts
-│   └── validators/
-│       └── inputValidator.test.ts
-└── integration/
-    └── execution.test.ts
+└── app.test.ts   # Health, unsupported languages, and no-execution response
 ```
 
 ## Coverage Goals

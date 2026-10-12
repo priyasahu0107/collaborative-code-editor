@@ -92,7 +92,7 @@ app.get('/api/v1', (_req, res) => {
   res.json({
     success: true,
     message: 'Collaborative Code Editor API',
-     {
+    data: {
       version: '0.4.0',
       documentation: '/api/v1/health',
     },

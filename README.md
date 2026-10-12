@@ -99,7 +99,8 @@ See [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) for detailed structure.
 - ✅ **Step 4**: Project & file management (CRUD, optimistic concurrency, path validation)
 - ✅ **Step 5**: Frontend dashboard, project management, file explorer, Monaco editor
 - ✅ **Step 6**: Real-time collaboration (Yjs + Socket.IO + MongoDB persistence)
-- 🔲 **Step 7**: Chat system (future)
+- ✅ **Step 7**: Chat, invitations & permissions (role-based access, real-time chat, project invitations)
+- 🔲 **Step 8**: Code execution service (future)
 
 ## Documentation
 

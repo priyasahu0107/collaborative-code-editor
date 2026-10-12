@@ -12,6 +12,7 @@ import logger from '../utils/logger.js';
 import { authenticateSocket } from './socket.auth.js';
 import { setupRoomHandlers } from './room.handlers.js';
 import { setupCollaborationHandlers } from './collaboration.handlers.js';
+import { setupChatHandlers } from './chat.handlers.js';
 
 let io: SocketIOServer | null = null;
 
@@ -48,6 +49,9 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
 
     // Set up collaboration handlers
     setupCollaborationHandlers(socket, io!);
+
+    // Set up chat handlers
+    setupChatHandlers(socket, io!);
 
     // Disconnect handler
     socket.on('disconnect', (reason) => {

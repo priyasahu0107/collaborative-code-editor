@@ -8,6 +8,7 @@ import { Socket, Server as SocketIOServer } from 'socket.io';
 import { Types } from 'mongoose';
 import Project from '../models/Project.model.js';
 import File from '../models/File.model.js';
+import ProjectMember from '../models/ProjectMember.model.js';
 import logger from '../utils/logger.js';
 import { getOrCreateDocument, cleanupDocument } from '../modules/collaboration/collaboration.service.js';
 
@@ -36,13 +37,25 @@ export function setupRoomHandlers(socket: Socket, io: SocketIOServer): void {
         return callback?.({ success: false, error: 'Invalid IDs' });
       }
 
-      // Verify project ownership
-      const project = await Project.findOne({
-        _id: new Types.ObjectId(projectId),
-        ownerId: new Types.ObjectId(userId),
+      // Verify project access (owner or member)
+      const project = await Project.findById(projectId);
+      if (!project) {
+        logger.warn('Project not found', { 
+          socketId: socket.id, 
+          userId, 
+          projectId 
+        });
+        return callback?.({ success: false, error: 'Project not found' });
+      }
+
+      // Check if user is owner or member
+      const isOwner = project.ownerId.toString() === userId;
+      const member = await ProjectMember.findOne({
+        projectId: new Types.ObjectId(projectId),
+        userId: new Types.ObjectId(userId),
       });
 
-      if (!project) {
+      if (!isOwner && !member) {
         logger.warn('Unauthorized project access', { 
           socketId: socket.id, 
           userId, 
@@ -51,20 +64,30 @@ export function setupRoomHandlers(socket: Socket, io: SocketIOServer): void {
         return callback?.({ success: false, error: 'Unauthorized' });
       }
 
+      // Check if user is viewer (can't edit)
+      if (member && member.role === 'viewer') {
+        logger.warn('Viewer attempted to join editing room', { 
+          socketId: socket.id, 
+          userId, 
+          projectId 
+        });
+        return callback?.({ success: false, error: 'Viewers cannot edit files' });
+      }
+
       // Verify file belongs to project
       const file = await File.findOne({
         _id: new Types.ObjectId(fileId),
         projectId: new Types.ObjectId(projectId),
-        ownerId: new Types.ObjectId(userId),
       });
 
       if (!file) {
-        logger.warn('Unauthorized file access', { 
+        logger.warn('File not found or does not belong to project', { 
           socketId: socket.id, 
           userId, 
-          fileId 
+          fileId,
+          projectId
         });
-        return callback?.({ success: false, error: 'Unauthorized' });
+        return callback?.({ success: false, error: 'File not found' });
       }
 
       // Create room ID

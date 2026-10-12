@@ -8,6 +8,9 @@ import ErrorState from '../components/common/ErrorState';
 import FileExplorer from '../components/editor/FileExplorer';
 import CodeEditor from '../components/editor/CodeEditor';
 import EditorTabs from '../components/editor/EditorTabs';
+import ChatPanel from '../components/chat/ChatPanel';
+import InviteCollaboratorDialog from '../components/collaboration/InviteCollaboratorDialog';
+import { MessageSquare, Users } from 'lucide-react';
 
 export default function WorkspacePage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -15,6 +18,8 @@ export default function WorkspacePage() {
   const { fetchFiles } = useFileStore();
   const { openFiles, activeFileId } = useEditorStore();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
   useEffect(() => {
     if (projectId) {
@@ -49,14 +54,36 @@ export default function WorkspacePage() {
       {/* Main Editor Area */}
       <div className="flex flex-1 flex-col">
         {/* Toolbar */}
-        <div className="flex h-12 items-center border-b border-gray-200 bg-white px-4">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="rounded p-1 hover:bg-gray-100"
-          >
-            {sidebarOpen ? '◀' : '▶'}
-          </button>
-          <span className="ml-4 text-sm font-medium text-gray-700">{currentProject.name}</span>
+        <div className="flex h-12 items-center justify-between border-b border-gray-200 bg-white px-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="rounded p-1 hover:bg-gray-100"
+            >
+              {sidebarOpen ? '◀' : '▶'}
+            </button>
+            <span className="ml-2 text-sm font-medium text-gray-700">{currentProject.name}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setInviteDialogOpen(true)}
+              className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+              title="Invite Collaborator"
+            >
+              <Users className="h-4 w-4" />
+              <span>Invite</span>
+            </button>
+            <button
+              onClick={() => setChatOpen(!chatOpen)}
+              className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm ${
+                chatOpen ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100'
+              }`}
+              title="Toggle Chat"
+            >
+              <MessageSquare className="h-4 w-4" />
+              <span>Chat</span>
+            </button>
+          </div>
         </div>
 
         {/* Editor Tabs */}
@@ -82,6 +109,26 @@ export default function WorkspacePage() {
           )}
         </div>
       </div>
+
+      {/* Chat Panel */}
+      {chatOpen && projectId && (
+        <div className="w-80">
+          <ChatPanel
+            projectId={projectId}
+            isOpen={chatOpen}
+            onClose={() => setChatOpen(false)}
+          />
+        </div>
+      )}
+
+      {/* Invite Dialog */}
+      {projectId && (
+        <InviteCollaboratorDialog
+          projectId={projectId}
+          isOpen={inviteDialogOpen}
+          onClose={() => setInviteDialogOpen(false)}
+        />
+      )}
     </div>
   );
 }

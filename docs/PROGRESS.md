@@ -214,10 +214,48 @@
 
 **Verification**: Client build passes (2.5MB JS, 73.9KB CSS). TypeScript checks pass. Socket.IO server integrated.
 
+### Step 7: Real-Time Chat, Invitations & Permissions ✅
+
+**Backend Implementation:**
+- [x] Create ProjectMember model for role-based access control
+- [x] Create Invitation model with secure token hashing
+- [x] Create Message model for chat persistence
+- [x] Implement invitation service (create, accept, decline, revoke)
+- [x] Implement invitation controller and routes
+- [x] Implement membership service (list, update role, remove)
+- [x] Implement membership controller and routes
+- [x] Implement chat service (create message, get history, delete)
+- [x] Create chat socket handlers with rate limiting
+- [x] Update room handlers to check membership (not just ownership)
+- [x] Integrate chat handlers into socket server
+- [x] Add invitation and membership routes to app.ts
+
+**Frontend Implementation:**
+- [x] Create chat service for Socket.IO integration
+- [x] Create invitation service for API calls
+- [x] Create membership service for API calls
+- [x] Create chat store with Zustand
+- [x] Create ChatPanel component with real-time messaging
+- [x] Create InviteCollaboratorDialog component
+- [x] Integrate chat panel into WorkspacePage
+- [x] Add invite button to workspace toolbar
+
+**Features Implemented:**
+- Role-based access control (owner, editor, viewer)
+- Project invitations with secure token-based acceptance
+- Real-time chat with message persistence
+- Chat history with pagination
+- Member management (list, update role, remove)
+- Viewers can chat but cannot edit files
+- Rate limiting on chat messages (30 per minute)
+- Connection status indicators
+
+**Verification**: Client build passes (2.58MB JS, 74.9KB CSS). TypeScript checks pass. All features integrated.
+
 ## Current Status
 
-**Phase**: Step 6 Complete ✅
-**Next Step**: Step 7 — Chat System (Future)
+**Phase**: Step 7 Complete ✅
+**Next Step**: Step 8 — Code Execution Service (Future)
 
 ## Implemented Features
 

@@ -74,13 +74,23 @@
 
 **Verification**: Client build passes. Server structure complete. Auth endpoints implemented. Tests configured.
 
-### Step 4: Project Management 🔲
+### Step 4: Project Management & File Management ✅
 
-- [ ] Create Project model with Mongoose
-- [ ] Implement project CRUD API
-- [ ] Implement project membership
-- [ ] Create project pages on client
-- [ ] Add project tests
+- [x] Create Project model with Mongoose
+- [x] Create File model with Mongoose (files and folders)
+- [x] Implement project CRUD API (create, list, get, update, delete)
+- [x] Implement file CRUD API (create, list, get, update, rename, delete)
+- [x] Implement folder management with recursive operations
+- [x] Implement path validation and traversal prevention
+- [x] Implement optimistic concurrency control (version-based)
+- [x] Implement ownership enforcement on all operations
+- [x] Implement pagination and search for project listing
+- [x] Implement file count and nesting depth limits
+- [x] Create project tests
+- [x] Create file tests
+- [x] Update API documentation
+- [x] Update security documentation
+- [x] Update progress documentation
 
 ### Step 5: Real-Time Collaboration 🔲
 
@@ -159,8 +169,8 @@
 
 ## Current Status
 
-**Phase**: Step 3 Complete ✅
-**Next Step**: Step 4 — Project Management
+**Phase**: Step 4 Complete ✅
+**Next Step**: Step 5 — Real-Time Collaboration
 
 ## Implemented Features
 
@@ -192,9 +202,11 @@
 
 ## Next Exact Implementation Step
 
-**Step 4.1**: Create the Project model at `server/src/models/Project.model.ts` that:
-1. Defines a Mongoose schema with name, description, owner (User reference), members array
-2. Includes timestamps (createdAt, updatedAt)
-3. Adds indexes on owner and members
-4. Implements member role management (owner, editor, viewer)
-5. Does not implement any API routes yet
+**Step 5.1**: Set up Yjs CRDT infrastructure for real-time collaboration:
+1. Install Yjs dependencies (yjs, y-websocket, y-protocols)
+2. Create collaboration module structure
+3. Implement Yjs document provider for file content
+4. Set up WebSocket server for real-time sync
+5. Implement awareness protocol for user presence
+6. Create collaboration service for document management
+7. Integrate with existing file management system

@@ -38,6 +38,184 @@ All API responses follow a consistent format:
 
 ## Implemented Endpoints
 
+### Projects
+
+#### POST /api/v1/projects
+Create a new project.
+
+**Request:**
+```json
+{
+  "name": "My Project",
+  "description": "Project description",
+  "defaultLanguage": "typescript"
+}
+```
+
+**Response (201):**
+```json
+{
+  "success": true,
+  "message": "Project created successfully",
+  "data": {
+    "id": "507f1f77bcf86cd799439011",
+    "name": "My Project",
+    "description": "Project description",
+    "ownerId": "507f191e810c19729de860ea",
+    "visibility": "private",
+    "defaultLanguage": "typescript",
+    "fileCount": 0,
+    "createdAt": "2024-01-15T10:30:00.000Z",
+    "updatedAt": "2024-01-15T10:30:00.000Z"
+  }
+}
+```
+
+#### GET /api/v1/projects
+List user's projects with pagination.
+
+**Query Parameters:**
+- `page` (default: 1)
+- `limit` (default: 20, max: 100)
+- `search` (optional)
+- `sortBy` (createdAt | updatedAt | name)
+- `sortOrder` (asc | desc)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Projects retrieved successfully",
+  "data": {
+    "projects": [...],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 5,
+      "totalPages": 1
+    }
+  }
+}
+```
+
+#### GET /api/v1/projects/:projectId
+Get a single project.
+
+**Response (200):** Project object
+
+#### PATCH /api/v1/projects/:projectId
+Update project metadata.
+
+**Request:**
+```json
+{
+  "name": "Updated Name",
+  "description": "Updated description"
+}
+```
+
+**Response (200):** Updated project object
+
+#### DELETE /api/v1/projects/:projectId
+Delete a project and all associated files.
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Project deleted successfully"
+}
+```
+
+### Files
+
+#### POST /api/v1/projects/:projectId/files
+Create a file or folder.
+
+**Request (file):**
+```json
+{
+  "name": "index.ts",
+  "path": "src",
+  "type": "file",
+  "language": "typescript",
+  "content": "console.log('hello');"
+}
+```
+
+**Request (folder):**
+```json
+{
+  "name": "src",
+  "type": "folder"
+}
+```
+
+**Response (201):** File/folder object
+
+#### GET /api/v1/projects/:projectId/files
+List files in a project.
+
+**Query Parameters:**
+- `path` (optional, filter by parent folder)
+- `type` (file | folder, optional)
+- `recursive` (boolean, default: false)
+
+**Response (200):** Array of file/folder objects
+
+#### GET /api/v1/projects/:projectId/files/:fileId
+Get a file with content.
+
+**Response (200):** File object with content
+
+#### PATCH /api/v1/projects/:projectId/files/:fileId
+Update file content with optimistic concurrency.
+
+**Request:**
+```json
+{
+  "content": "console.log('updated');",
+  "version": 1
+}
+```
+
+**Response (200):** Updated file object with incremented version
+
+**Conflict (409):**
+```json
+{
+  "success": false,
+  "message": "Version conflict: expected version 1, but current version is 2",
+  "error": {
+    "code": "CONFLICT",
+    "statusCode": 409
+  }
+}
+```
+
+#### PATCH /api/v1/projects/:projectId/files/:fileId/rename
+Rename a file or folder.
+
+**Request:**
+```json
+{
+  "newName": "main.ts"
+}
+```
+
+**Response (200):** Updated file object with new name and path
+
+#### DELETE /api/v1/projects/:projectId/files/:fileId
+Delete a file or folder (recursive for folders).
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "File deleted successfully"
+}
+```
+
 ### Health Check
 
 #### GET /api/v1/health

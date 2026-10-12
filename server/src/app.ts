@@ -26,6 +26,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { notFoundHandler } from './middleware/notFound.js';
 import healthRoutes from './routes/health.routes.js';
 import authRoutes from './modules/auth/auth.routes.js';
+import projectRoutes from './modules/projects/project.routes.js';
 import logger from './utils/logger.js';
 
 const app = express();
@@ -67,6 +68,7 @@ app.use(cookieParser());
 // Versioned API prefix
 app.use('/api/v1/health', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/projects', projectRoutes);
 
 // API root info
 app.get('/api/v1', (_req, res) => {
@@ -74,7 +76,7 @@ app.get('/api/v1', (_req, res) => {
     success: true,
     message: 'Collaborative Code Editor API',
      {
-      version: '0.3.0',
+      version: '0.4.0',
       documentation: '/api/v1/health',
     },
   });

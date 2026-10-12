@@ -29,6 +29,7 @@ import authRoutes from './modules/auth/auth.routes.js';
 import projectRoutes from './modules/projects/project.routes.js';
 import invitationRoutes from './modules/invitations/invitation.routes.js';
 import membershipRoutes from './modules/memberships/membership.routes.js';
+import executionRoutes from './modules/execution/execution.routes.js';
 import logger from './utils/logger.js';
 
 const app = express();
@@ -73,6 +74,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/projects', projectRoutes);
 app.use('/api/v1', invitationRoutes);
 app.use('/api/v1', membershipRoutes);
+app.use('/api/v1/execution', executionRoutes);
 
 // API root info
 app.get('/api/v1', (_req, res) => {

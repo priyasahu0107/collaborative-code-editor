@@ -100,7 +100,8 @@ See [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) for detailed structure.
 - ✅ **Step 5**: Frontend dashboard, project management, file explorer, Monaco editor
 - ✅ **Step 6**: Real-time collaboration (Yjs + Socket.IO + MongoDB persistence)
 - ✅ **Step 7**: Chat, invitations & permissions (role-based access, real-time chat, project invitations)
-- 🔲 **Step 8**: Code execution service (future)
+- ✅ **Step 8**: Code execution service (Docker isolation, multi-language support, security controls)
+- 🔲 **Step 9**: Advanced features (future)
 
 ## Documentation
 

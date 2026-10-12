@@ -10,7 +10,8 @@ import CodeEditor from '../components/editor/CodeEditor';
 import EditorTabs from '../components/editor/EditorTabs';
 import ChatPanel from '../components/chat/ChatPanel';
 import InviteCollaboratorDialog from '../components/collaboration/InviteCollaboratorDialog';
-import { MessageSquare, Users } from 'lucide-react';
+import ExecutionOutputPanel from '../components/execution/ExecutionOutputPanel';
+import { MessageSquare, Users, Play } from 'lucide-react';
 
 export default function WorkspacePage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -20,6 +21,7 @@ export default function WorkspacePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [executionOpen, setExecutionOpen] = useState(false);
 
   useEffect(() => {
     if (projectId) {
@@ -83,6 +85,16 @@ export default function WorkspacePage() {
               <MessageSquare className="h-4 w-4" />
               <span>Chat</span>
             </button>
+            <button
+              onClick={() => setExecutionOpen(!executionOpen)}
+              className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm ${
+                executionOpen ? 'bg-green-100 text-green-700' : 'text-gray-700 hover:bg-gray-100'
+              }`}
+              title="Toggle Execution Panel"
+            >
+              <Play className="h-4 w-4" />
+              <span>Run</span>
+            </button>
           </div>
         </div>
 
@@ -128,6 +140,20 @@ export default function WorkspacePage() {
           isOpen={inviteDialogOpen}
           onClose={() => setInviteDialogOpen(false)}
         />
+      )}
+
+      {/* Execution Output Panel */}
+      {executionOpen && projectId && activeFile && (
+        <div className="h-64 border-t border-gray-200">
+          <ExecutionOutputPanel
+            isOpen={executionOpen}
+            onClose={() => setExecutionOpen(false)}
+            projectId={projectId}
+            fileId={activeFile.id}
+            language={activeFile.language || 'javascript'}
+            code={activeFile.content}
+          />
+        </div>
       )}
     </div>
   );

@@ -17,6 +17,7 @@
     "build:server": "npm run build --workspace=server",
     "build:execution": "npm run build --workspace=execution-service",
     "build:all": "npm run build:client && npm run build:server && npm run build:execution",
+    "preview": "npm run preview --workspace=client",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "typecheck:client": "npm run typecheck --workspace=client",
     "typecheck:server": "npm run typecheck --workspace=server",

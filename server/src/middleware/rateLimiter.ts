@@ -56,3 +56,32 @@ export const apiRateLimiter = rateLimit({
     return req.ip || req.socket.remoteAddress || 'unknown';
   },
 });
+
+/**
+ * Execution rate limiter.
+ *
+ * Limits code execution requests to prevent abuse and resource exhaustion.
+ * More restrictive than general API limits since execution is expensive.
+ * Uses authenticated user ID as the key for per-user limits.
+ */
+export const executionRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // 20 execution requests per user per window
+  message: {
+    success: false,
+    message: 'Too many execution requests. Please try again later.',
+    error: {
+      code: 'EXECUTION_RATE_LIMIT_EXCEEDED',
+      statusCode: 429,
+    },
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req: Request) => {
+    // Use authenticated user ID for per-user rate limiting
+    // Falls back to IP if user is not authenticated (should not happen for protected routes)
+    return req.auth?.userId || req.ip || req.socket.remoteAddress || 'unknown';
+  },
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
+});

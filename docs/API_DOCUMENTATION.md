@@ -525,3 +525,179 @@ await api.post('/api/v1/auth/logout');
 
 ### CORS Configuration
 The server is configured to accept credentials from `CLIENT_URL` (default: `http://localhost:5173`). Multiple origins can be comma-separated.
+
+---
+
+## Code Execution Endpoints
+
+### POST /api/v1/execution/execute
+Execute code in a secure, isolated Docker container.
+
+**Authentication**: Required (JWT cookie)
+
+**Authorization**: User must be project owner or editor (viewers cannot execute)
+
+**Request:**
+```json
+{
+  "projectId": "507f1f77bcf86cd799439011",
+  "fileId": "507f1f77bcf86cd799439012",
+  "language": "javascript",
+  "code": "console.log('Hello, World!');",
+  "stdin": "",
+  "timeout": 10000
+}
+```
+
+**Request Fields:**
+- `projectId` (required): MongoDB ObjectId of the project
+- `fileId` (optional): MongoDB ObjectId of the file being executed
+- `language` (required): Language identifier (javascript, typescript, python)
+- `code` (required): Source code to execute (max 64KB)
+- `stdin` (optional): Standard input for the program (max 10KB)
+- `timeout` (optional): Execution timeout in milliseconds (1000-30000, default: 10000)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "stdout": "Hello, World!\n",
+    "stderr": "",
+    "exitCode": 0,
+    "executionTime": 123,
+    "timedOut": false
+  }
+}
+```
+
+**Response Fields:**
+- `stdout`: Standard output from the program
+- `stderr`: Standard error output
+- `exitCode`: Process exit code (0 = success)
+- `executionTime`: Execution time in milliseconds
+- `timedOut`: Whether the execution timed out
+
+**Error Responses:**
+
+**400 Bad Request** - Validation error:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid execution request"
+  }
+}
+```
+
+**403 Forbidden** - Permission denied:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "PERMISSION_DENIED",
+    "message": "Only editors can execute code"
+  }
+}
+```
+
+**404 Not Found** - Project or file not found:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "PROJECT_NOT_FOUND",
+    "message": "Project not found"
+  }
+}
+```
+
+**503 Service Unavailable** - Execution service not running:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "SERVICE_UNAVAILABLE",
+    "message": "Execution service unavailable"
+  }
+}
+```
+
+### GET /api/v1/execution/languages
+Get list of supported programming languages.
+
+**Authentication**: Required
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "javascript",
+      "name": "JavaScript",
+      "supported": true
+    },
+    {
+      "id": "typescript",
+      "name": "TypeScript",
+      "supported": true
+    },
+    {
+      "id": "python",
+      "name": "Python",
+      "supported": true
+    }
+  ]
+}
+```
+
+### GET /api/v1/execution/health
+Check execution service health status.
+
+**Authentication**: Required
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "status": "healthy",
+    "timestamp": "2024-01-15T10:30:00.000Z"
+  }
+}
+```
+
+**Response Fields:**
+- `status`: "healthy" or "unhealthy"
+- `timestamp`: Current timestamp
+
+### Supported Languages
+
+| Language | ID | Runtime | Status |
+|----------|-----|---------|--------|
+| JavaScript | `javascript` | Node.js 20 | ✅ Supported |
+| TypeScript | `typescript` | Node.js 20 + tsc | ✅ Supported |
+| Python | `python` | Python 3.11 | ✅ Supported |
+
+### Execution Limits
+
+| Resource | Limit |
+|----------|-------|
+| Code size | 64KB |
+| Input size | 10KB |
+| Output size | 1MB (stdout/stderr) |
+| Execution time | 30 seconds max |
+| Memory | 256MB |
+| CPU | 1 core |
+| Processes | 64 max |
+
+### Security Features
+
+- Docker container isolation
+- No network access
+- Read-only filesystem
+- Non-root user execution
+- Automatic cleanup
+- Resource limits enforced

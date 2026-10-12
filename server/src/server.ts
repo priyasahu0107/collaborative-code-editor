@@ -18,6 +18,7 @@ import app from './app.js';
 import { loadEnv, isProduction, isTest } from './config/env.js';
 import { connectDatabase, disconnectDatabase, getDatabaseStatus } from './config/database.js';
 import { initializeSocketIO, closeSocketIO } from './sockets/socket.server.js';
+import { ensureAllIndexes } from './scripts/ensureIndexes.js';
 import logger from './utils/logger.js';
 
 // Track whether shutdown is in progress to prevent duplicate handling
@@ -48,6 +49,25 @@ async function start(): Promise<void> {
     if (!isTest()) {
       try {
         await connectDatabase();
+        
+        // 2.5. Ensure all required indexes exist
+        if (getDatabaseStatus() === 'connected') {
+          try {
+            await ensureAllIndexes();
+          } catch (indexError) {
+            const message = indexError instanceof Error ? indexError.message : 'Unknown error';
+            logger.error('Database index verification failed', { error: message });
+            
+            if (isProduction()) {
+              // In production, index failure is fatal
+              logger.error('Production startup aborted: database indexes could not be verified.');
+              process.exit(1);
+            }
+            
+            // In development, continue with warning
+            logger.warn('Continuing startup with unverified database indexes (development mode).');
+          }
+        }
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';
         logger.error('Database connection failed during startup', { error: message });

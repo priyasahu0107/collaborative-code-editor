@@ -12,6 +12,7 @@
 import type { Request, Response } from 'express';
 import { getDatabaseState, getDatabaseStatus } from '../config/database.js';
 import { getEnv } from '../config/env.js';
+import { checkExecutionServiceHealth } from '../modules/execution/execution.service.js';
 
 const SERVICE_NAME = 'collaborative-code-editor-api';
 const SERVICE_VERSION = '0.2.0';
@@ -64,7 +65,7 @@ export function getLiveness(_req: Request, res: Response): void {
  * GET /api/v1/health/ready
  *
  * Readiness probe — confirms the application is ready to serve requests.
- * Checks database connectivity status.
+ * Checks database connectivity status and execution service health.
  *
  * Returns:
  * - 200 if all dependencies are ready
@@ -72,7 +73,7 @@ export function getLiveness(_req: Request, res: Response): void {
  *
  * Does NOT expose database URIs, credentials, or internal hostnames.
  */
-export function getReadiness(_req: Request, res: Response): void {
+export async function getReadiness(_req: Request, res: Response): Promise<void> {
   const dbState = getDatabaseState();
   const dbStatus = getDatabaseStatus();
   const env = getEnv();
@@ -80,9 +81,23 @@ export function getReadiness(_req: Request, res: Response): void {
   // Determine overall readiness
   const isDbReady = dbStatus === 'connected' || dbStatus === 'disabled';
 
+  // Check execution service health
+  let executionServiceStatus: 'healthy' | 'unhealthy' | 'not_configured' = 'not_configured';
+  try {
+    if (env.EXECUTION_SERVICE_URL) {
+      const isHealthy = await checkExecutionServiceHealth();
+      executionServiceStatus = isHealthy ? 'healthy' : 'unhealthy';
+    }
+  } catch (error) {
+    executionServiceStatus = 'unhealthy';
+  }
+
+  // Overall readiness: database must be ready, execution service is optional but reported
+  const isReady = isDbReady;
+
   const readinessData = {
     service: SERVICE_NAME,
-    status: isDbReady ? 'ready' : 'not_ready',
+    status: isReady ? 'ready' : 'not_ready',
     timestamp: new Date().toISOString(),
     checks: {
       database: {
@@ -90,11 +105,14 @@ export function getReadiness(_req: Request, res: Response): void {
         // Only include safe diagnostic info — never the URI
         ...(dbState.error ? { message: dbState.error } : {}),
       },
+      executionService: {
+        status: executionServiceStatus,
+      },
       environment: env.NODE_ENV,
     },
   };
 
-  if (isDbReady) {
+  if (isReady) {
     res.json({
       success: true,
       message: 'Service is ready',
